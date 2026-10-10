@@ -1,0 +1,44 @@
+run_id: gpu-smoke-qwen3-8b
+seed: 42
+policy: static_stage
+limits:
+  n: 2
+  k: 1
+  m: 1
+  max_n: 4
+  max_k: 4
+  max_m: 4
+queues:
+  request: 16
+  model: 16
+  tool: 16
+timeouts:
+  request_ms: 60000
+  model_ms: 45000
+  tool_ms: 5000
+model:
+  kind: vllm
+  base_url: http://127.0.0.1:8002/v1
+  model: Qwen/Qwen3-8B
+  revision: REPLACE_WITH_IMMUTABLE_HUGGINGFACE_REVISION
+  temperature: 0
+  max_tokens: 256
+  enable_thinking: false
+arrival:
+  kind: steady
+  request_rate: 0.2
+  num_requests: 2
+workload:
+  catalog: workloads/tasks.yaml
+  mixture:
+    sqlite: 0.5
+    data_analysis: 0.5
+resources:
+  tool_workers: 4
+  within_tool_threads: 1
+services:
+  agent_url: http://127.0.0.1:8000
+  tool_url: http://127.0.0.1:8001
+telemetry:
+  output_dir: results
+max_actions: 4

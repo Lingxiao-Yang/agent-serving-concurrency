@@ -1,0 +1,36 @@
+services:
+  tool-service:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    command: ["agentcc", "tool-service", "--config", "configs/cpu_smoke.yaml", "--host", "0.0.0.0"]
+    environment:
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+    ports: ["127.0.0.1:8001:8001"]
+    volumes: ["../results:/workspace/results"]
+
+  agent-service:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    command: ["agentcc", "agent-service", "--config", "configs/cpu_smoke.yaml", "--host", "0.0.0.0"]
+    environment:
+      AGENTCC_TOOL_URL: http://tool-service:8001
+    depends_on: [tool-service]
+    ports: ["127.0.0.1:8000:8000"]
+    volumes: ["../results:/workspace/results"]
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.56.2
+    profiles: ["metrics"]
+    privileged: true
+    devices: ["/dev/kmsg:/dev/kmsg"]
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /dev/disk:/dev/disk:ro
+    ports: ["127.0.0.1:8080:8080"]

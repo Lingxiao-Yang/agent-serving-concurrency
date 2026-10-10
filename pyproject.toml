@@ -1,0 +1,62 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "agentcc"
+version = "0.1.0"
+description = "A testbed for global and stage-specific concurrency control in agent serving"
+readme = "README.md"
+requires-python = ">=3.12,<3.15"
+license = {file = "LICENSE"}
+authors = [
+  {name = "Lingxiao Yang"},
+  {name = "Chenrui Gao"},
+]
+dependencies = [
+  "fastapi>=0.128,<1",
+  "httpx>=0.28,<1",
+  "langgraph>=1.0,<2",
+  "openai>=2.0,<3",
+  "opentelemetry-api>=1.38,<2",
+  "opentelemetry-exporter-otlp-proto-grpc>=1.38,<2",
+  "opentelemetry-instrumentation-fastapi>=0.59b0,<1",
+  "opentelemetry-sdk>=1.38,<2",
+  "prometheus-client>=0.23,<1",
+  "pydantic>=2.12,<3",
+  "PyYAML>=6.0.3,<7",
+  "uvicorn>=0.38,<1",
+]
+
+[project.optional-dependencies]
+analysis = ["matplotlib>=3.10,<4"]
+dev = [
+  "mypy>=1.18,<2",
+  "pytest>=9.0,<10",
+  "pytest-asyncio>=1.3,<2",
+  "ruff>=0.14,<1",
+  "types-PyYAML>=6.0.12,<7",
+]
+
+[project.scripts]
+agentcc = "agentcc.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/agentcc"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "ASYNC"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+packages = ["agentcc"]

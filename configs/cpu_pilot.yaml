@@ -1,0 +1,40 @@
+run_id: cpu-pilot-stage-k2-m2
+seed: 395
+policy: static_stage
+limits:
+  n: 8
+  k: 2
+  m: 2
+  max_n: 8
+  max_k: 4
+  max_m: 4
+queues:
+  request: 256
+  model: 256
+  tool: 256
+timeouts:
+  request_ms: 15000
+  model_ms: 5000
+  tool_ms: 5000
+model:
+  kind: scripted
+  delay_ms: 25
+arrival:
+  kind: poisson
+  request_rate: 20
+  burstiness: 1
+  num_requests: 100
+workload:
+  catalog: workloads/tasks.yaml
+  mixture:
+    sqlite: 0.5
+    data_analysis: 0.5
+resources:
+  tool_workers: 4
+  within_tool_threads: 1
+services:
+  agent_url: http://127.0.0.1:8000
+  tool_url: http://127.0.0.1:8001
+telemetry:
+  output_dir: results
+max_actions: 4

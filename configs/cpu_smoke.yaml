@@ -1,0 +1,39 @@
+run_id: cpu-smoke
+seed: 42
+policy: static_stage
+limits:
+  n: 4
+  k: 2
+  m: 2
+  max_n: 8
+  max_k: 4
+  max_m: 4
+queues:
+  request: 32
+  model: 32
+  tool: 32
+timeouts:
+  request_ms: 10000
+  model_ms: 3000
+  tool_ms: 3000
+model:
+  kind: scripted
+  delay_ms: 20
+arrival:
+  kind: steady
+  request_rate: 5
+  num_requests: 10
+workload:
+  catalog: workloads/tasks.yaml
+  mixture:
+    sqlite: 0.5
+    data_analysis: 0.5
+resources:
+  tool_workers: 4
+  within_tool_threads: 1
+services:
+  agent_url: http://127.0.0.1:8000
+  tool_url: http://127.0.0.1:8001
+telemetry:
+  output_dir: results
+max_actions: 4

@@ -1,0 +1,36 @@
+tasks:
+  - task_id: sqlite-region-sales
+    family: sqlite
+    fixture_id: customers-orders-v1
+    prompt: >-
+      Use sqlite_query with seed_sql workloads/sqlite/fixture.sql and return total
+      order amount by region, ordered by region. Use the exact query supplied in
+      the tool arguments.
+    tool_name: sqlite_query
+    tool_arguments:
+      seed_sql: workloads/sqlite/fixture.sql
+      query: >-
+        SELECT c.region, SUM(o.amount) AS total
+        FROM customers c JOIN orders o USING(customer_id)
+        GROUP BY c.region ORDER BY c.region
+    expected:
+      - [East, 250.0]
+      - [West, 125.0]
+    deadline_ms: 10000
+
+  - task_id: analysis-region-mean
+    family: data_analysis
+    fixture_id: sales-v1
+    prompt: >-
+      Use data_analysis on workloads/data_analysis/sales.csv. Group by region and
+      compute the mean of amount. Return the resulting JSON object.
+    tool_name: data_analysis
+    tool_arguments:
+      dataset: workloads/data_analysis/sales.csv
+      group_by: region
+      value_column: amount
+      operation: mean
+    expected:
+      north: 15.0
+      south: 15.0
+    deadline_ms: 10000
